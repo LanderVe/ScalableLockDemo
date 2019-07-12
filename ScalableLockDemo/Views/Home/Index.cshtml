@@ -1,0 +1,54 @@
+﻿@{
+  ViewData["Title"] = "Home Page";
+}
+
+  <div class="text-center">
+    <input id="notifynolock" type="button" value="Spam no lock" />
+    <input id="notifylockall" type="button" value="Spam lock all" />
+    <input id="notifylockperid" type="button" value="Spam lock per id" />
+  </div>
+
+@section Scripts {
+  <script>
+
+    let ids = [1, 2, 3, 1, 1, 1, 2, 2, 2, 3, 3, 3];
+
+    function spam(type) {
+      //for (let id of ids) {
+      //  notify(id); //don't wait
+      //}
+
+      let i = 0;
+      let max = ids.length;
+
+      //loop with 50ms wait between calls
+      function myLoop() {        
+        setTimeout(function () { 
+          notify(type,ids[i]);        
+          ++i;                   
+          if (i < max) {         
+            myLoop();            
+          }                      
+        }, 50)
+      }
+
+      myLoop();                  
+    }
+
+    function notify(type, paymentid) {
+      fetch(`/api/payment/${type}?paymentid=${paymentid}`)
+        .then(
+          data => console.log('success' + paymentid, data),
+          err => console.error('error' + paymentid, err)
+        );
+    }
+
+    document.querySelector('#notifynolock').addEventListener('click', e=> spam('notifynolock'));
+    document.querySelector('#notifylockall').addEventListener('click', e=> spam('notifylockall'));
+    document.querySelector('#notifylockperid').addEventListener('click', e=> spam('notifylockperid'));
+    //spam('notifynolock');
+    //spam('notifylockall');
+    //spam('notifylockperid');
+
+  </script>
+}
